@@ -1,4 +1,4 @@
-/*select *
+/*select p.genres, p.review_count
 FROM play_store_apps p
 INNER JOIN app_store_apps a
 ON p.name = a.name;*/
@@ -6,12 +6,13 @@ ON p.name = a.name;*/
 --above query is for testing
 
 
-/*SELECT p.genres, p.category, ROUND((AVG(p.rating) + AVG(a.rating)) / 2, 2) AS avg_rating
+/*SELECT p.genres, ROUND(((AVG(p.rating) + AVG(a.rating)) / 2), 2) AS avg_rating
 FROM play_store_apps p
 INNER JOIN app_store_apps a
 ON p.name = a.name
 GROUP BY p.genres, p.category
-ORDER BY avg_rating DESC;
+ORDER BY avg_rating DESC
+LIMIT 10;
 
 We can see from this that the highest rated genres of apps across both stores are interactive education apps, books and references apps, brain/board game apps
 (think words with friends), strategy and sports games, and family simulation apps.
