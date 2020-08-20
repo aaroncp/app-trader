@@ -214,3 +214,4 @@ on p.name = a.name
 where (cast(replace(p.price,'$','') as decimal(5,2))) < 1.01
 and a.price < 1.01
 order by avg_rating desc
+-- Sidenote for myself, I want to learn more of sql so I could get to the point of writing a query like this one.
