@@ -1,6 +1,7 @@
 /*SELECT DISTINCT genre_clean, ROUND(AVG(avg_rating),2) AS total_avg_rating
 FROM
-	(SELECT DISTINCT REPLACE(REPLACE(TRIM(UPPER(primary_genre)),' ','_'),'&','AND') AS genre_clean, ROUND(AVG(rating),2) AS avg_rating		FROM app_store_apps
+	(SELECT DISTINCT REPLACE(REPLACE(TRIM(UPPER(primary_genre)),' ','_'),'&','AND') AS genre_clean, ROUND(AVG(rating),2) AS avg_rating		
+	FROM app_store_apps
 	WHERE price <= '1.00' AND rating IS NOT NULL
 	GROUP BY primary_genre
 	UNION
