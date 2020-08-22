@@ -41,20 +41,25 @@ where rating IS NOT NULL
 group by rating, name
 order by rating desc
 ----
-select name,round(avg(review_count),2) as avg_rc, rating
+select round(avg(review_count),2) as avg_rc, rating
 from play_store_apps
 where rating IS NOT NULL 
-group by rating, name
+group by rating
 order by rating desc
 ---
-select name,cast(replace(replace(install_count,'+',''),',','') as integer), rating
+select cast(replace(replace(install_count,'+',''),',','') as integer), rating
 from play_store_apps
 group by rating, name
 order by rating desc
 ----
-select name,cast(review_count as int), rating
+select round(avg(cast(review_count as int)),2) as avg_rc, rating
 from app_store_apps
-where (select round(avg(review_count),2) as avg_rc 
-from app_store_apps)
-group by rating, name
+group by rating 
 order by rating desc
+---
+select round(avg(cast(replace(replace(install_count,'+',''),',','') as integer)),2) as avg_inc, rating
+from play_store_apps
+where rating IS NOT NULL 
+group by rating
+order by rating desc
+
