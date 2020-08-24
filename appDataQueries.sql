@@ -44,21 +44,47 @@ cast(a.review_count as integer) as A_review_count, p.review_count as P_review_co
 from
 	(select distinct(name) as name, max(category) as category, max(rating) as rating, max(review_count) as review_count,
 	 max(install_count) as install_count,max(price) as price,max(content_rating) as content_rating,max(genres) as genres
-	from play_store_apps
-	group by name) as p
+	 from play_store_apps
+	 group by name) as p
 inner join 
 	(select distinct(name) as name, max(price) as price, max(review_count) as review_count, max(rating) as rating, 
 	 max(content_rating) as content_rating, max(primary_genre) as primary_genre
-	from app_store_apps
-	group by name) as a
+	 from app_store_apps
+	 group by name) as a
 on p.name = a.name
 where (cast(replace(p.price,'$','') as decimal(5,2))) < 1.01
 and a.price < 1.01
-and (a.content_rating in ('9+','4+','12+') or p.content_rating in ('Everyone 10+','Teen','Everyone'))
-and (lower(a.primary_genre) in ('productivity','music','photo & video','business','health & fitness','games','weather','shopping','reference','travel')
-	or lower(p.category) in ('events','education','art_and_design','books_and_reference','personalization','parenting','game','beauty','health_and_fitness','social'))
-and lower(p.genres) in ('events', 'word', 'puzzle','art & design','books & reference','parenting','personalization','education','arcade','action','board',
-			'casino','role playing','beauty','health & fitness', 'shopping','social','strategy','sports','weather')
+and (a.content_rating in (select content_rating
+						  from app_store_apps
+						  group by content_rating
+						  having count(*)>10
+						  order by count(*) desc
+						  limit 3) 
+	 or p.content_rating in (select content_rating
+							 from play_store_apps
+							 group by content_rating
+							 having count(*)>10
+							 order by avg(rating) desc
+							 limit 3))
+and (a.primary_genre in (select primary_genre
+						 from app_store_apps
+						 group by primary_genre
+						 having count(*)>10
+						 order by avg(rating) desc
+						 limit 10)
+	or p.category in (select category
+					  from play_store_apps
+					  group by category
+					  having count(*)>10
+					  order by avg(rating) desc
+					  limit 10))
+and p.genres in (select genres
+				 from play_store_apps
+				 where genres not like '%;%'
+				 group by genres
+				 having count(*)>10
+				 order by avg(rating) desc
+				 limit 20)
 and round((((a.rating + p.rating)/2)/.5),0)*.5 = 4.5
 order by a_review_count desc
 limit 10;
